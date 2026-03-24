@@ -15,22 +15,28 @@ class Data_model :
             if not isinstance(columns,dict):
                 raise ValueError("error : columns are not passed as dictionary") 
             
-            if not isinstance(name,dict):
+            if not isinstance(name,str):
                 raise ValueError("error : table name  are not passed as string ")
 
             # normalize table name
-            name = name.strip.lower()
+            name = name.strip().lower()
 
             # check duplicate table → error
-            if name in self.tables.keys : 
-                 raise "error : table name duplicated"
-            else : pass
+            # no need for keys()
+            if name in self.tables : 
+                 raise ValueError("error : table name duplicated")
+            
+            # validate Column instances
+            for i in columns :
+                if not isinstance(columns[i],Column) :
+                    raise ValueError("error : table columns  are not createad as Column Type ") 
+            
 
             # normalize column names
-            for i in columns :
-               columns[i].name = columns[i].name.lower
+            for col in columns.values() :
+               col.name = col.name.lower()
             #    example (id , ("id" , "varchar10"))
-
+            
             # detect duplicate columns → error
             # we have them stored in a dictionary no way there is duplicate keys
             # if we are talking about the values inside the columns dict then yes
@@ -41,19 +47,13 @@ class Data_model :
 
             for counter in lst : 
                  if lst.count(counter) >= 2 :
-                    raise "error : table column duplicated"
-                 else : pass
-            
-            # validate Column instances
-            for i in columns :
-                if not isinstance(columns[i],Column) :
-                    raise "error : table columns  are not createad as Column Type " 
-                else : pass
-                 
+                    raise ValueError("error : table column duplicated")     
             # create Table
             table = Table(name,columns)
             
-            # store no need its in memory 
+            # we need store , its in memory inside the method not yet stored inside the instance
+
+            self.tables[name] = table
 
 
 

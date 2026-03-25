@@ -1,5 +1,6 @@
 import pandas
 from Table import Column,Table
+from Relationship import RelashionShip
 
 class Data_model :
     
@@ -8,6 +9,7 @@ class Data_model :
     def __init__(self):
         # Instance variables
         self.tables : dict[str, Table] = {}
+        self.RelashionShips : list[tuple] = []  # i chooose tuple instead of  set to keep order intact 
 
     
     def add_table(self,tablename : str, columns : list[tuple[str,str]]):
@@ -70,6 +72,73 @@ class Data_model :
 
             self.tables[tablename] = table
 
+    def add_Relationship(self, left_table : str, left_column : str ,
+                 right_table : str, right_column : str) :
+        
+        # inputs are strings
+        # normalized
+        # tables exist
+        # columns exist
+        # types match
+        # no exact duplicate (same tuple)
+        # allow self-relationships
+        # allow reverse relationships
+
+        if not left_table :
+            raise ValueError(" left table should be non null ")
+        
+        if not left_column :
+             raise ValueError(" left column should be non null ")
+        
+        if not right_table :
+            raise ValueError(" right table should be non null ")
+        
+        if not right_column :
+             raise ValueError(" right column should be non null ")
+        
+        # inputs are strings
+        if not isinstance(left_table,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(left_column,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(right_table,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(right_column,str):
+            raise ValueError("error : columns are not passed as str")
+
+        # normalized
+        left_table = left_table.strip().lower()
+        left_column = left_column.strip().lower()
+        right_table = right_table.strip().lower()
+        right_column = right_column.strip().lower()
+
+        # tables exist
+        if left_table in self.tables and  right_table in self.tables : 
+             
+            # columns exist
+             if left_column in self.tables[left_table].columns and right_column in self.tables[right_table].columns:
+                  
+                # types match
+                  if self.tables[left_table].columns[left_column].type == self.tables[right_table].columns[right_column].type:
+                
+                        # no exact duplicate (same tuple)
+                        if tuple(left_table,left_column,right_table,right_column) not in self.RelashionShips :
+                             
+                               # à revoir Relationship = RelashionShip(tablename,col)
+                             
+
+                       
+
+
+                       
+            
 
 
 
+
+              
+         
+         

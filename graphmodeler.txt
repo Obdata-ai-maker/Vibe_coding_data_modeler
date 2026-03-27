@@ -1,0 +1,45 @@
+
+Breadth-First Search (BFS)
+
+        A
+      / | \
+     B  C  D
+    / \     \
+   E   F     G
+                \
+                 H
+
+BFS scans each level on its own , because its its based on a fifo first in first out so ut scans each level on its own 
+but for my system i need to keep track of my own system so yeah that i can retrack easily the whole trajectory .
+it does not goes deep first but level by level 
+
+iteration 1 : queue : ( (B,[A -> B])  ,(C,[A -> C]),(D,[A -> D]))
+iteration 2 : explore B : dequeue (B,[A -> B]) :  B has E and F neighbours    queue : ((C,[A -> C]),(D,[A -> D]),(E,[A -> B,B -> E]),(F,[A -> B,B -> F]))
+iteration 3 : explore C  : dequeue (C,[A -> C]) :  C has no neighbours    queue : ((D,[A -> D]),(E,[A -> B,B -> E]),(F,[A -> B,B -> F]))
+iteration 4 : explore D  : dequeue (D,[A -> D]):  D has G neighbours    queue : ((E,[A -> B,B -> E]),(F,[A -> B,B -> F])(G,[A -> D,D -> G]))
+iteration 5 : explore E  : dequeue (E,[A -> B,B -> E]) :  E has no neighbours    queue : ((F,[A -> B,B -> F])(G,[A -> D,D -> G]))
+iteration 6 : explore F  : dequeue (F,[A -> B,B -> F]) :  F has no neighbours    queue : (G,[A -> D,D -> G]))
+iteration 7 : explore G   : dequeue (G,[A -> D,D -> G])) :  G has H neighbours    queue : (H,[A -> D,D -> G,G -> H]))
+iteration 8 : explore H   : dequeue ([A -> D,D -> G,G -> H])) :  H has no neighbours    queue : ()
+
+
+🚀 Let’s zoom into your Iteration 7
+
+You had:
+
+queue = [("G", [A → D, D → G])]
+Step 1 — Dequeue happens FIRST
+current = ("G", [A → D, D → G])
+queue = []
+
+👉 G is now out of the queue
+
+Step 2 — Process G
+
+Find neighbors:
+
+H
+Step 3 — Enqueue happens AFTER
+enqueue → ("H", [A → D, D → G, G → H])
+✅ End of iteration 7
+queue = [("H", [...])]

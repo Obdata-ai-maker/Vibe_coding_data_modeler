@@ -1,4 +1,4 @@
-class RelashionShip :
+class Relashionship :
 
     def __init__(self, left_table : str, left_column : str ,
                  right_table : str, right_column : str ):

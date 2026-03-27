@@ -159,16 +159,4 @@ class Data_model :
             # (existing_left == new_right AND existing_right == new_left)
                 
         self.Relashionships.append(Relashionship(left_table,left_column,right_table,right_column))       
-
-                       
-
-
-                       
-            
-
-
-
-
-              
-         
-         
+   

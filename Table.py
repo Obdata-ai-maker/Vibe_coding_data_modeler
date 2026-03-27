@@ -5,7 +5,7 @@ from Column import Column
 class Table :
     def __init__(self, name : str, columns: dict[str, Column]):
         # Instance variables
-        self.name = name.lower
+        self.name = name
         self.columns  = columns
 
         #    

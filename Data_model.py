@@ -1,60 +1,144 @@
 import pandas
 from Table import Column,Table
+from Relationship import RelashionShip
 
 class Data_model :
     
+    DATA_TYPES = {"integer", "string", "date", "float", "bool"}
     
     def __init__(self):
         # Instance variables
         self.tables : dict[str, Table] = {}
+        self.RelashionShips : list[tuple] = []  # i chooose tuple instead of  set to keep order intact 
 
     
-    def add_table(self,name : str, columns: dict[str, Column]):
+    def add_table(self,tablename : str, columns : list[tuple[str,str]]):
             
             # validate dict and str instances
-            if not isinstance(columns,dict):
-                raise ValueError("error : columns are not passed as dictionary") 
+            if not isinstance(columns,list):
+                raise ValueError("error : columns are not passed as list")
+            if not columns : 
+                raise ValueError(" columns list should be non null ")
             
-            if not isinstance(name,dict):
-                raise ValueError("error : table name  are not passed as string ")
+            if not isinstance(tablename,str):
+                raise ValueError("table name are not passed as string ")
 
             # normalize table name
-            name = name.strip.lower()
+            tablename = tablename.strip().lower()
 
             # check duplicate table → error
-            if name in self.tables.keys : 
-                 raise "error : table name duplicated"
-            else : pass
-
-            # normalize column names
-            for i in columns :
-               columns[i].name = columns[i].name.lower
-            #    example (id , ("id" , "varchar10"))
-
-            # detect duplicate columns → error
-            # we have them stored in a dictionary no way there is duplicate keys
-            # if we are talking about the values inside the columns dict then yes
-            # create list
-            lst = list()
-            for i in columns :
-                 lst.append(columns[i].name)
-
-            for counter in lst : 
-                 if lst.count(counter) >= 2 :
-                    raise "error : table column duplicated"
-                 else : pass
+            # no need for keys()
+            if tablename in self.tables : 
+                 raise ValueError("error : table name duplicated")
             
+            
+            colvalide : dict[str, str] = {} # with type hint better initialise
+            col: dict[str, Column] = {} # with type hint better initialise
+
             # validate Column instances
-            for i in columns :
-                if not isinstance(columns[i],Column) :
-                    raise "error : table columns  are not createad as Column Type " 
-                else : pass
-                 
-            # create Table
-            table = Table(name,columns)
+            # list are mutable 
+            # !!!!!!!!!!!!! tuple are immutable !!!!!!!!!!
+
+            for col_tuple in columns :
+                if not isinstance(col_tuple, tuple) or len(col_tuple) != 2:
+                    raise ValueError("Each column must be a tuple (name, type)")
+                
+                if not isinstance(col_tuple[0], str) or  not isinstance(col_tuple[1], str) :
+                    raise ValueError("Each column and type must be a string non null ")
+                
+                col_name = col_tuple[0].strip().lower()
+                col_type = col_tuple[1].strip().lower()
+
+                if not col_name :
+                     raise ValueError(f"error : column {col_name} should be non null  ")
+                if not col_type :
+                    raise ValueError(f"error : column type {col_type} should be non null ")
+
+                if  col_name in colvalide :
+                    raise ValueError(f"error : column {col_name} duplicated ")
+                
+                if col_type in self.DATA_TYPES  :
+                        colvalide[col_name] = col_type
+                        col[col_name] = Column(col_name,col_type )
+                else  :
+                        raise ValueError(f"error : column type {col_type} is invalid  ")
+                        #colvalide[name] = "string"
+                        # col[name] = Column(name,colvalide[name])
+
+
+            table = Table(tablename,col)
             
-            # store no need its in memory 
+            # we need store , its in memory inside the method not yet stored inside the instance
+
+            self.tables[tablename] = table
+
+    def add_Relationship(self, left_table : str, left_column : str ,
+                 right_table : str, right_column : str) :
+        
+        # inputs are strings
+        # normalized
+        # tables exist
+        # columns exist
+        # types match
+        # no exact duplicate (same tuple)
+        # allow self-relationships
+        # allow reverse relationships
+
+        if not left_table :
+            raise ValueError(" left table should be non null ")
+        
+        if not left_column :
+             raise ValueError(" left column should be non null ")
+        
+        if not right_table :
+            raise ValueError(" right table should be non null ")
+        
+        if not right_column :
+             raise ValueError(" right column should be non null ")
+        
+        # inputs are strings
+        if not isinstance(left_table,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(left_column,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(right_table,str):
+            raise ValueError("error : columns are not passed as str")
+        
+        if not isinstance(right_column,str):
+            raise ValueError("error : columns are not passed as str")
+
+        # normalized
+        left_table = left_table.strip().lower()
+        left_column = left_column.strip().lower()
+        right_table = right_table.strip().lower()
+        right_column = right_column.strip().lower()
+
+        # tables exist
+        if left_table in self.tables and  right_table in self.tables : 
+             
+            # columns exist
+             if left_column in self.tables[left_table].columns and right_column in self.tables[right_table].columns:
+                  
+                # types match
+                  if self.tables[left_table].columns[left_column].type == self.tables[right_table].columns[right_column].type:
+                
+                        # no exact duplicate (same tuple)
+                        if tuple(left_table,left_column,right_table,right_column) not in self.RelashionShips :
+                             
+                               # à revoir Relationship = RelashionShip(tablename,col)
+                             
+
+                       
+
+
+                       
+            
 
 
 
 
+              
+         
+         

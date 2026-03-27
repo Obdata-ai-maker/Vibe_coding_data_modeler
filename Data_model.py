@@ -1,6 +1,6 @@
 import pandas
 from Table import Column,Table
-from Relationship import RelashionShip
+from Relationship import Relashionship
 
 class Data_model :
     
@@ -9,7 +9,7 @@ class Data_model :
     def __init__(self):
         # Instance variables
         self.tables : dict[str, Table] = {}
-        self.RelashionShips : list[tuple] = []  # i chooose tuple instead of  set to keep order intact 
+        self.Relashionships : list[Relashionship] = []
 
     
     def add_table(self,tablename : str, columns : list[tuple[str,str]]):
@@ -17,6 +17,7 @@ class Data_model :
             # validate dict and str instances
             if not isinstance(columns,list):
                 raise ValueError("error : columns are not passed as list")
+            
             if not columns : 
                 raise ValueError(" columns list should be non null ")
             
@@ -72,7 +73,7 @@ class Data_model :
 
             self.tables[tablename] = table
 
-    def add_Relationship(self, left_table : str, left_column : str ,
+    def add_Relashionship(self, left_table : str, left_column : str ,
                  right_table : str, right_column : str) :
         
         # inputs are strings
@@ -82,7 +83,7 @@ class Data_model :
         # types match
         # no exact duplicate (same tuple)
         # allow self-relationships
-        # allow reverse relationships
+        # disallow reverse relationships
 
         if not left_table :
             raise ValueError(" left table should be non null ")
@@ -116,19 +117,48 @@ class Data_model :
         right_column = right_column.strip().lower()
 
         # tables exist
-        if left_table in self.tables and  right_table in self.tables : 
+        if left_table not in self.tables or  right_table not in self.tables :
+             raise ValueError("error : tables don't exist")
              
             # columns exist
-             if left_column in self.tables[left_table].columns and right_column in self.tables[right_table].columns:
+        if left_column not in self.tables[left_table].columns or right_column not in self.tables[right_table].columns:
+            raise ValueError("error : column tables don't exist")
+
                   
                 # types match
-                  if self.tables[left_table].columns[left_column].type == self.tables[right_table].columns[right_column].type:
+        if self.tables[left_table].columns[left_column].type != self.tables[right_table].columns[right_column].type:
+            raise ValueError("error : column types  don't match")
+        
+        if left_table == right_table and right_column == left_column :
+            raise ValueError("error : self Relashionship with same column not allowed")
+        
+        for element in self.Relashionships :
+            if element.right_table == left_table and element.left_table == right_table and element.right_column == left_column and element.left_column == right_column :
+                raise ValueError("error : Relashionship duplicated")
+            
+            if element.left_table == left_table and element.right_table == right_table and element.left_column == left_column and element.right_column == right_column :
+                raise ValueError("error : Relashionship duplicated")
+            
+
+            # later improvements
+            # Define:
+
+            # new_left  = (left_table, left_column)
+            # new_right = (right_table, right_column)
+
+            # For each existing:
+
+            # existing_left  = (element.left_table, element.left_column)
+            # existing_right = (element.right_table, element.right_column)
+
+            # Then:
+
+            # duplicate if:
+            # (existing_left == new_left AND existing_right == new_right)
+            # OR
+            # (existing_left == new_right AND existing_right == new_left)
                 
-                        # no exact duplicate (same tuple)
-                        if tuple(left_table,left_column,right_table,right_column) not in self.RelashionShips :
-                             
-                               # à revoir Relationship = RelashionShip(tablename,col)
-                             
+        self.Relashionships.append(Relashionship(left_table,left_column,right_table,right_column))       
 
                        
 

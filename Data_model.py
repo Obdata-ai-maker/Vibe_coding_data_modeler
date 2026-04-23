@@ -160,3 +160,20 @@ class Data_model :
                 
         self.Relashionships.append(Relashionship(left_table,left_column,right_table,right_column))       
    
+    
+def get_neighbours(self, target_table : str) : 
+    lst : list[tuple] = [] 
+
+    target_table = target_table.strip().lower() 
+    if target_table not in self.tables : 
+        raise ValueError("error : table not existent ") 
+    
+    for rel in self.Relashionships : 
+        
+        if target_table == rel.left_table : 
+            lst.append((rel.left_table,rel.right_table,rel.left_column,rel.right_column)) 
+        
+        if target_table == rel.right_table : 
+            lst.append((rel.right_table,rel.left_table,rel.right_column,rel.left_column)) 
+            
+        return lst

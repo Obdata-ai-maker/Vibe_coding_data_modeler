@@ -176,4 +176,4 @@ def get_neighbours(self, target_table : str) :
         if target_table == rel.right_table : 
             lst.append((rel.right_table,rel.left_table,rel.right_column,rel.left_column)) 
             
-        return lst
+    return lst

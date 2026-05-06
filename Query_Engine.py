@@ -41,7 +41,7 @@ class Query_engine :
                         right = path1.right_table
                     elif path1.right_table in query_tables and path1.left_table not in query_tables:
                         new_table = path1.left_table
-                        # need to rethink 
+                        # need to rethink why variables 
                         left = path1.left_table
                         right = path1.right_table
                     else:
